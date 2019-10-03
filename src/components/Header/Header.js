@@ -4,7 +4,7 @@ import "./Header.css";
 const Header = () => {
   return (
     <header className="header">
-      <h1>Top commented</h1>
+      <h1 className="text-center">Top commented</h1>
     </header>
   );
 };

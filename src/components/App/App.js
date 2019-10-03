@@ -6,14 +6,16 @@ import "./App.css";
 class App extends Component {
   state = {
     comments: [],
-    loading: false
+    loading: true
   };
 
   async componentDidMount() {
+    this.setState({ loading: true });
     const result = await fetch(
       "https://www.reddit.com/r/reactjs.json?limit=100"
     ).then(res => res.json());
-    this.setState({ comments: result.data.children });
+    console.log(result);
+    this.setState({ comments: result.data.children, loading: false });
   }
 
   render() {
