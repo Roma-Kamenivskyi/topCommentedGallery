@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Header from "../Header";
+import Gallery from "../Gallery";
+import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  state = {
+    comments: [],
+    loading: false
+  };
+
+  async componentDidMount() {
+    const result = await fetch(
+      "https://www.reddit.com/r/reactjs.json?limit=100"
+    ).then(res => res.json());
+    this.setState({ comments: result.data.children });
+  }
+
+  render() {
+    const { loading, comments } = this.state;
+    return (
+      <div className="container">
+        <Header />
+        <Gallery loading={loading} comments={comments} />
+      </div>
+    );
+  }
 }
 
 export default App;
