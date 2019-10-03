@@ -1,12 +1,22 @@
 import React, { Component } from "react";
 import Header from "../Header";
 import Gallery from "../Gallery";
+import Refresh from "../Refresh";
 import "./App.css";
 
 class App extends Component {
   state = {
     comments: [],
-    loading: true
+    loading: true,
+    refreshStatus: false
+  };
+
+  onRefresh = () => {
+    this.setState(({ refreshStatus }) => {
+      return {
+        refreshStatus: !refreshStatus
+      };
+    });
   };
 
   async componentDidMount() {
@@ -19,10 +29,12 @@ class App extends Component {
   }
 
   render() {
-    const { loading, comments } = this.state;
+    const { loading, comments, refreshStatus } = this.state;
+
     return (
       <div className="container">
         <Header />
+        <Refresh onRefresh={this.onRefresh} refreshStatus={refreshStatus} />
         <Gallery loading={loading} comments={comments} />
       </div>
     );

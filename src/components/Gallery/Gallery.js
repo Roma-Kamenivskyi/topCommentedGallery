@@ -2,6 +2,16 @@ import React from "react";
 import "./Gallery.css";
 import GalleryItem from "../GalleryItem";
 
+const compareComments = (a, b) => {
+  if (a.data.num_comments > b.data.num_comments) {
+    return -1;
+  }
+  if (a.data.num_comments < b.data.num_comments) {
+    return 1;
+  }
+  return 0;
+};
+
 const Gallery = ({ loading, comments }) => {
   if (loading) {
     return (
@@ -13,25 +23,24 @@ const Gallery = ({ loading, comments }) => {
     );
   }
 
-  const sortedElems = comments.sort(compare);
+  const sortedElems = comments.sort(compareComments);
   const elements = sortedElems.map(item => {
     const {
       data,
-      data: { id }
+      data: { id, thumbnail }
     } = item;
-    return <GalleryItem item={data} key={id} />;
+
+    const isIncludesThumbnail = thumbnail
+      .toString()
+      .includes("thumbs.redditmedia.com/");
+
+    if (isIncludesThumbnail) {
+      return <GalleryItem item={data} key={id} />;
+    } else {
+      return;
+    }
   });
   return <ul className="gallery row">{elements}</ul>;
 };
-
-function compare(a, b) {
-  if (a.data.num_comments > b.data.num_comments) {
-    return -1;
-  }
-  if (a.data.num_comments < b.data.num_comments) {
-    return 1;
-  }
-  return 0;
-}
 
 export default Gallery;
