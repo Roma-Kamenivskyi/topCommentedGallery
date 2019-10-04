@@ -1,41 +1,76 @@
 import React, { Component } from "react";
 import Header from "../Header";
 import Gallery from "../Gallery";
-import Refresh from "../Refresh";
+// import Filters from "../Filters";
 import "./App.css";
 
 class App extends Component {
   state = {
     comments: [],
-    loading: true,
-    refreshStatus: false
+    loading: false,
+    refreshStatus: false,
+    minComments: 0
   };
 
   onRefresh = () => {
-    this.setState(({ refreshStatus }) => {
-      return {
-        refreshStatus: !refreshStatus
-      };
-    });
+    const { refreshStatus } = this.state;
+    this.setState(
+      state => {
+        return {
+          refreshStatus: !state.refreshStatus
+        };
+      },
+      () => {
+        if (refreshStatus) {
+          clearInterval(this.interval);
+        } else {
+          this.interval = setInterval(this.fetchData, 3000);
+        }
+      }
+    );
   };
 
-  async componentDidMount() {
+  fetchData = async () => {
     this.setState({ loading: true });
     const result = await fetch(
       "https://www.reddit.com/r/reactjs.json?limit=100"
-    ).then(res => res.json());
-    console.log(result);
+    )
+      .then(res => res.json())
+      .catch(err => console.log(err));
     this.setState({ comments: result.data.children, loading: false });
+  };
+
+  onChangeFilter = event => {
+    this.setState({ minComments: Number(event.target.value) });
+  };
+
+  componentDidMount() {
+    this.fetchData();
   }
 
   render() {
-    const { loading, comments, refreshStatus } = this.state;
+    const { loading, comments, refreshStatus, minComments } = this.state;
 
     return (
       <div className="container">
         <Header />
-        <Refresh onRefresh={this.onRefresh} refreshStatus={refreshStatus} />
-        <Gallery loading={loading} comments={comments} />
+        <div>Current filter: {minComments}</div>
+        <input
+          type="range"
+          min={0}
+          defaultValue={minComments}
+          max={500}
+          style={{ width: "400px" }}
+          onChange={this.onChangeFilter}
+        />
+        <button onClick={this.onRefresh} type="button">
+          {refreshStatus ? "Stop" : "Start"} auto refresh
+        </button>
+        <Gallery
+          loading={loading}
+          comments={comments}
+          minComments={minComments}
+        />
       </div>
     );
   }
