@@ -6,7 +6,7 @@ import Spinner from '../Spinner';
 
 import './Gallery.css';
 
-const getItemsByComments = (items, minComments) => {
+const sortComments = (items, minComments) => {
   const sortedItems = items
     .filter(item => item.data.num_comments >= minComments)
     .sort((a, b) => b.data.num_comments - a.data.num_comments);
@@ -19,11 +19,11 @@ const Gallery = ({ loading, comments, minComments }) => {
     return <Spinner />;
   }
 
-  const itemsByComments = getItemsByComments(comments, minComments);
+  const sortedComments = sortComments(comments, minComments);
 
   return (
     <ul className='gallery row'>
-      {itemsByComments.map(({ data }) => (
+      {sortedComments.map(({ data }) => (
         <GalleryItem item={data} key={data.id} />
       ))}
     </ul>
@@ -32,7 +32,8 @@ const Gallery = ({ loading, comments, minComments }) => {
 
 Gallery.propTypes = {
   loading: PropTypes.bool.isRequired,
-  comments: PropTypes.array.isRequired
+  comments: PropTypes.array.isRequired,
+  minComments: PropTypes.number
 };
 
 export default Gallery;

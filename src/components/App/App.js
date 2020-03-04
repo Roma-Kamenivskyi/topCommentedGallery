@@ -4,6 +4,8 @@ import Header from '../Header';
 import Gallery from '../Gallery';
 import Refresh from '../Refresh';
 
+import fetchData from '../../services/fetchData';
+
 import './App.css';
 
 class App extends Component {
@@ -11,11 +13,12 @@ class App extends Component {
     comments: [],
     loading: false,
     refreshStatus: false,
-    minComments: 0
+    minComments: 0,
+    limit: 100
   };
 
   componentDidMount() {
-    this.fetchData();
+    this.updateData();
   }
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -31,15 +34,14 @@ class App extends Component {
     if (refreshStatus) {
       clearInterval(this.interval);
     } else {
-      this.interval = setInterval(this.fetchData, 3000);
+      this.interval = setInterval(this.updateData, 3000);
     }
   };
 
-  fetchData = async () => {
+  updateData = async () => {
     this.setState({ loading: true });
 
-    await fetch('https://www.reddit.com/r/reactjs.json?limit=100')
-      .then(response => response.json())
+    fetchData(`/reactjs.json?limit=${this.state.limit}`)
       .then(({ data }) =>
         this.setState({ comments: data.children, loading: false })
       )
@@ -60,7 +62,7 @@ class App extends Component {
           <input
             type='range'
             min={0}
-            defaultValue={minComments}
+            value={minComments}
             max={1000}
             style={{ width: '100%' }}
             onChange={this.onChangeFilter}

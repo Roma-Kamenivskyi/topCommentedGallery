@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './Refresh.css';
-
 const Refresh = ({ refreshStatus, onRefresh }) => {
   let value = 'Start';
 
