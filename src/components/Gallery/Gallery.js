@@ -1,49 +1,33 @@
-import React from "react";
-import "./Gallery.css";
-import GalleryItem from "../GalleryItem";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-const compareComments = (a, b) => {
-  if (a.data.num_comments > b.data.num_comments) {
-    return -1;
-  }
-  if (a.data.num_comments < b.data.num_comments) {
-    return 1;
-  }
-  return 0;
-};
+import GalleryItem from '../GalleryItem';
+import Spinner from '../Spinner';
+
+import './Gallery.css';
+
 const getItemsByComments = (items, minComments) => {
-  return items
+  const sortedItems = items
     .filter(item => item.data.num_comments >= minComments)
-    .sort(compareComments);
+    .sort((a, b) => b.data.num_comments - a.data.num_comments);
+
+  return sortedItems;
 };
 
 const Gallery = ({ loading, comments, minComments }) => {
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center">
-        <div className="spinner-border" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   const itemsByComments = getItemsByComments(comments, minComments);
-  const elements = itemsByComments.map(item => {
-    const {
-      data,
-      data: { id, thumbnail }
-    } = item;
 
-    const isIncludesThumbnail = thumbnail.includes("thumbs.redditmedia.com/");
-    if (isIncludesThumbnail) {
-      return <GalleryItem item={data} key={id} />;
-    } else {
-      return false;
-    }
-  });
-  return <ul className="gallery row">{elements}</ul>;
+  return (
+    <ul className='gallery row'>
+      {itemsByComments.map(({ data }) => (
+        <GalleryItem item={data} key={data.id} />
+      ))}
+    </ul>
+  );
 };
 
 Gallery.propTypes = {

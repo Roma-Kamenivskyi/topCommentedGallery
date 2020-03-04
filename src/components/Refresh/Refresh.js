@@ -1,20 +1,17 @@
-import React from "react";
-import "./Refresh.css";
+import React from 'react';
 
-// async refresh = () => {
-//     await
-//     onRefresh()
-// }
+import './Refresh.css';
 
 const Refresh = ({ refreshStatus, onRefresh }) => {
-  let value = "Start";
-  if (refreshStatus) {
-    value = "Stop";
-  } else {
-    value = "Start";
-  }
+  let value = 'Start';
 
-  return <button onClick={onRefresh}>{value} auto refresh</button>;
+  refreshStatus ? (value = 'Stop') : (value = 'Start');
+
+  return (
+    <button className='btn btn-warning' onClick={onRefresh}>
+      {value} auto refresh
+    </button>
+  );
 };
 
 export default Refresh;
